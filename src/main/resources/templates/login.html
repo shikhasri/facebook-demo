@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="webjars/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" media="screen"> </link>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="webjars/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<title>Login Page</title>
+
+</head>
+<body>
+<div class="container-fluid">
+<div class="container">
+
+<div th:fragment="header">
+<h3 class="form-signin-heading" th:text="Welcome"></h3>
+        <nav class="navbar navbar-default" id="navparent" style="padding-bottom:10px ;width:400px;margin-top:100px;margin-left:350px">
+            <div class="container-fluid" id="postmaincontent">
+		<!-- <img th:src="@{/images/login.jpg}" class="img-responsive center-block" width="300" height="300" alt="Logo" /> -->
+		<form th:action="@{/validatelogin}" method="POST" class="form-signin">
+			
+			<br/>
+			 
+			<input type="text" id="email" name="email"  th:placeholder="Email" class="form-control" /> <br/> 
+			<input type="password"  th:placeholder="Password" id="password" name="password" class="form-control" /> <br /> 
+				
+			<div align="center" th:if="${errorMessage}">
+				<p style="font-size: 20; color: #FF1C19;">Email or Password invalid, please verify</p>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit" th:text="Login"></button>
+		</form>
+		</div>
+		</nav>
+		</div>
+		</div>
+</div>
+<a th:href="@{/registration.html}" style="margin-left:570px;font-size:20px;">Click to register</a>
+
+
+</body>
+</html>

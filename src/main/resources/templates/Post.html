@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="webjars/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" media="screen"> </link>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="webjars/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<title>Facebook dummy</title>
+
+</head>
+<body>
+	<label style="margin-left:1050px;" th:text="'Hello '+${fname}"></label>&nbsp; &nbsp;<a th:href="@{/login.html}"> Log out</a>
+	<input type="hidden" th:value="${fname}" id="userid"></input>
+	<input type="hidden" th:value="${userid}" id="userid1"></input>
+	
+<div class="container-fluid" style="margin-top:20px;">
+  <div class="container">
+    <div th:fragment="header">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid" style="padding-bottom:10px;padding-top:10px;">
+                <div class="navbar-header" >
+                	<button type="button" class="btn btn-default">
+  						<span class="glyphicon glyphicon-pencil" aria-hidden="true"> Create Post</span>
+					</button>
+                    
+                   
+                </div> 
+                
+                <div class="form-group">
+    
+    				<textarea class="form-control" id="content" rows="3" placeholder="What's on your mind?"></textarea>
+  			   </div>
+  			 
+  			    <button type="button" class="btn btn-primary pull-right" onclick="postIt();" >Post</button>
+            </div>
+        </nav>
+        <div th:if="${not #lists.isEmpty(posts)}" id="myshared_posts">
+	<a href="#" th:onclick="'return getPosts();'" id="allpostlink">view previous posts</a>
+       </div>
+    </div>
+    
+</div>
+
+</div>
+
+<div class="container-fluid" id="post_container" style="display:none">
+  <div class="container">
+    <div th:fragment="header">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+            	
+            	<div class="form-group">
+    
+    				<p id="firstpostby"></p>
+    				<hr></hr>
+  				</div>
+                <div class="form-group">
+    
+    				<textarea class="form-control" id="posthere" readonly="true" style=" margin-top: 22px;"></textarea>
+  				</div>
+                    <div class="btn-group">
+                    
+                    <button type="button" class="btn" id="firstpostlike" onclick="likeFirstPost(this);">
+  						<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> Like</span>
+					</button>
+                    
+                    <button type="button" class="btn" id="firstpostcoment" onclick="commentFirstPost(this);">
+  						<span class="glyphicon glyphicon-comment" aria-hidden="true"> Comment</span>
+					</button>
+					<button type="button" class="btn" data-toggle="modal" data-target="#GSCCModal" onclick="firstShare(this);">
+  						<span class="glyphicon glyphicon-share-alt" aria-hidden="true"> Share</span>
+					</button>
+      					
+    				</div>
+            </div>
+            <a href="#" th:onclick="'return getComments(this);'" style="margin-left:8px;display:none" id="viewc">View comments</a> 
+            <a id="likedetails1" href="#" style="margin-left:8px;"></a>
+            <a id="sharedetails1" href="#" style="margin-left:8px;"></a>
+            <div id="commenthere1"></div>
+            <button type="button" class="btn" style="float:right">
+  						<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"> </span>
+			</button>
+        </nav>
+	<!-- <a href="#" th:onclick="'return getPosts();'" id="allpostlink1">view previous posts</a> -->
+       
+    </div>
+</div>
+</div>
+
+<div th:if="${not #lists.isEmpty(sharedpoststome)}" id="myshared_posts">
+<div class="container-fluid" th:each="sharedpost:${sharedpoststome}">
+  <div class="container">
+    <div th:fragment="header">
+        <nav class="navbar navbar-default">
+        
+        <div class="container-fluid">
+                <div class="form-group">
+               <p class="navbar-text" th:text="${sharedpost.sharedby.name}+ ' shared this post on your timeline'"></p><br></br>
+                           <hr style="margin-left:-275px"></hr>
+                              <p class="navbar-text" th:text="${sharedpost.aboutshare}" style="margin-left:15px;margin-top:-10px;"></p>       
+                </div> 
+          			 
+  				 <div class="form-group">
+    
+    				<textarea class="form-control" th:text="${sharedpost.postid.postcontent}" readonly="true" style="margin-top: 22px;"></textarea>
+  			   </div>
+                        				
+            </div>
+          
+    </nav> 
+
+</div>
+</div>
+</div>
+</div>
+
+<div th:if="${not #lists.isEmpty(posts)}" style="display:none" id="all_posts">
+<div class="container-fluid" th:each="post:${posts}">
+  <div class="container">
+    <div th:fragment="header">
+        <nav class="navbar navbar-default" th:id="navparent" style="padding-top:10px">
+            <div class="container-fluid">
+            <div class="form-group">
+    
+    				<p th:text="${post.userid.name} +' at '+${post.posttime}"></p>
+    				<hr></hr>
+  				</div>
+                <div class="form-group">
+    
+    				<textarea class="form-control" id="posteddata" th:text="${post.postcontent}" readonly="true"></textarea>
+  				</div>
+  					 
+  				  <div class="btn-group" id="allbuttons">
+                    
+                    <button type="button" class="btn" id="likepost" th:onclick="'likePost(\''+ ${post.postid} + '\',this);'">
+                    
+                    <div th:if="${not #lists.isEmpty(post.likes)}"> 
+                     <div th:each="likes :${post.likes}">
+                     
+                     <div th:if="${likes.userid.userid}==${userid}">
+              		
+				             <div th:if="${likes.likeflag}==1">
+				             
+  								  <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true">DisLike</span>
+							</div>
+							
+							<div th:if="${likes.likeflag}==0">
+  								  <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> Like</span>
+							</div>
+				
+            			</div> 
+            			
+            		           		                    
+            		</div>
+            		
+            		  </div>
+  						<div th:if="${#lists.isEmpty(post.likes)}">
+  						<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> Like</span>
+  						</div>
+					</button>
+                    
+                    <button type="button" class="btn" th:onclick="'commentOnPost(\''+ ${post.postid} + '\',this);'">
+  						<span class="glyphicon glyphicon-comment" aria-hidden="true"> Comment</span>
+					</button>
+					<button type="button" class="btn" data-toggle="modal" data-target="#GSCCModal" th:onclick="'shareOnPost(\''+ ${post.postid} + '\',\'' + ${post.postcontent} +'\',this);'">
+  						<span class="glyphicon glyphicon-share-alt" aria-hidden="true" > Share</span>
+					</button>
+      					
+    				</div>
+    				
+            </div>
+          <!--   th:href="${ '/fetchpplliked/' + post.postid}"-->
+             <a id="postlikes" href="#" data-toggle="modal" th:onclick="'return getPplLiked(\''+ ${post.postid} + '\',this);'" th:attr="data-target='#likesmodal'" style="margin-left:8px;" th:text="${post.likecount}==0? '' : ${post.likecount}+' like(s)'"></a> 
+              <a id="postcomments" href="#" th:onclick="'return getComments(\''+ ${post.postid} + '\',this);'" style="margin-left:7px;" th:text="${post.commentcount}==0? '' : ${post.commentcount}+' comment(s)'"></a> 
+              <a th:id="'postshares'+${post.postid}" href="#" style="margin-left:7px;" th:text="${post.sharecount}==0? '' : ${post.sharecount}+' share(s)'"></a> 
+             
+             <div th:if="${not #lists.isEmpty(post.comments)}" style="display:none" th:id="${post.postid}"> 
+             <nav class="navbar navbar-default" style="margin-left:8px;width:660px;height:12px;" th:each="comment :${post.comments}">
+            
+              		
+				<label style="margin-left:5px;" class="navbar-text" th:text="${comment.commentedby.name}+':'"></label>
+				<p class="navbar-text" style="margin-left:-5px;" th:text="${comment.commentcontent}"></p>
+				<button th:id="${comment.commentid}" type="button" class="btn btn-default" style="float: right;margin-top:10px" onclick="delComment(this,this.id);">
+				<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+             
+            
+            </nav> 
+            
+            </div>
+             
+             
+             
+           <!--        
+             <div th:if="${not #lists.isEmpty(post.shares)}" > 
+             	<a href="#" th:onclick="'return viewShares(this);'" style="margin-left:8px;" id="viewshare"  th:text="${post.sharecount}+' share(s)'"></a> 
+            	
+              		<nav class="navbar navbar-default" style="margin-left:8px;width:660px;display:none"> 
+              		
+              		 <div th:each="share :${post.shares}">
+              		 <label style="margin-left:10px; width:400px;font-size:15px;color:blue;" th:text="' shared by    '+${share.sharedby}+ ' to '+ ${share.shareto}"></label>
+				<label th:id="'label' + ${share.shareid}" style="margin-left:10px; width:400px;font-size:15px;font-weight:lighter;" th:text="${share.aboutshare}"></label>
+				</div></nav>
+            
+            
+         
+            </div>  -->
+             <div id="commenthere"></div>
+            <button type="button" class="btn" style="float:right" th:onclick="'delPost(\''+${post.postid} + '\',this);'">
+  						<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"> </span>
+			</button>
+        </nav>
+		
+       
+    </div>
+    </div>
+    </div>
+   </div> 
+   
+ <div id="likesmodal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;  </button>
+        <h4 class="modal-title" >people who liked this post</h4>
+      </div>
+      <div class="modal-body">
+      <div id="likeuserdetails">
+      	 
+      </div>
+       
+  		
+      </div>
+      <div class="modal-footer">
+        
+      </div>
+    </div>
+  </div>
+	
+    
+    
+</div>
+
+
+
+	
+<div id="GSCCModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;  </button>
+        <h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>Share post</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+        <nav class="navbar navbar-default" style="height:200px;">
+        <input class="form-control" id="aboutshare" type="text"  placeholder="Say something about this post.." style="outline: none;border:none"></input>
+        	
+    		<label id="sharepostdata" style="margin-top:20px;margin-left:20px;"></label>
+    	</nav>
+   
+  		</div>
+  		<p class="navbar-text">Share with</p><input class="form-control" id="toshare" type="text"  placeholder="Share with.." style="outline: none;border:none"></input>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="sharePostnow();">Share</button>
+      </div>
+    </div>
+  </div>
+</div>	
+ 
+    
+
+</body>
+<script th:inline="javascript">
+$(document).ready(function(){
+	/* $.ajax({
+		
+		
+		url:"/findallshares",
+		data:{userid:$("#userid1").val()},
+		success: function(){
+			
+		}
+	}); */
+	
+});
+var firstpostid;
+var fistpostcontent;
+function postIt(){
+	
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/submitpost",
+		data :{postdata:$("#content").val(),userid:$("#userid1").val()},
+		success : function(response) {
+			var data= response;
+			firstpostid=response.split(',')[0];
+			fistpostcontent=$("#content").val();
+			$("#post_container").show();
+			$("#posthere").text($("#content").val());
+			//$("#allpostlink").hide();
+			$("#firstpostby").text(response.split(',')[1]);
+			$("#content").val("");
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});
+}
+
+function likeFirstPost(obj){
+	
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/likepost",
+		data :{postpk:firstpostid,userid:$("#userid1").val()},
+		success : function(response) {
+			
+			
+			if(response.split(',')[0]!=0){
+				$(obj).parent().parent().parent().find('#likedetails1').html(response.split(',')[0]+" like(s)");
+				} 
+				if(response.split(',')[1]=='L'){
+					$(obj).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"> DisLike</span>');
+				}
+				else{
+					$(obj).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> Like</span>');
+				}
+		
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});
+	
+}
+var y=100;
+function commentFirstPost(obj){
+	
+	$(obj).parent().parent().parent().find('#commenthere1')
+	 .append('<input type="text" id="commentdata'+ y++ +'" placeholder="write a comment..." style="margin-left: 10px; width:400px" onkeypress="return runScript1(event,\''+firstpostid+'\',this,this.id)"></input>');
+	
+}
+
+
+var flag;
+function likePost(postpk,obj){
+	
+	
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/likepost",
+		data :{postpk:postpk,userid:$("#userid1").val()},
+		success : function(response) {
+			
+			if(response.split(',')[0]!=0){
+			$(obj).parent().parent().parent().find('#postlikes').html(response.split(',')[0]+" like(s)");
+			} 
+			if(response.split(',')[1]=='L'){
+				$(obj).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"> DisLike</span>');
+			}
+			else{
+				$(obj).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"> Like</span>');
+			}
+						
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});
+	
+}
+
+
+var x=1;
+function commentOnPost(postpk,obj){
+	
+	 
+	 $(obj).parent().parent().parent().find('#commenthere')
+	 .append('<input type="text" id="commentdata'+ x++ +'" placeholder="write a comment..." style="margin-left: 10px; width:400px" onkeypress="return runScript(event,\''+postpk+'\',this,this.id)"></input>');
+	
+		
+	}	
+
+function runScript(e,postpk,obj,id) {
+    if (e.keyCode == 13) {
+    
+	 $.ajax({
+			type : "POST",
+			//contentType : "application/json",
+			url : "/submitcomment",
+			data :{postcomment:$("#"+id).val(),postpk:postpk,userid:$("#userid1").val()},
+			success : function(response) {
+				var data= response;
+				//alert(data);
+				 $(obj).parent().parent().parent().find('#commenthere')
+				 .append('<nav class="navbar navbar-default" style="margin-left:8px;width:660px;" id="nav'+ response.split(',')[0] +'">'
+						 +'<label style="margin-left:5px;" class="navbar-text">'+response.split(',')[2]+':</label>'
+						+'	<p class="navbar-text" style="margin-left:-5px;">'+$("#"+id).val()+'</p>'
+				 +'<button id="'+ response.split(',')[0] +'" type="button" class="btn btn-default" style="float: right;" onclick="delComment(this,this.id);">'
+					+'<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button></nav>');
+				// $().html(response.split(',')[1]+' comment(s)');
+				$("#"+id).hide();
+				
+				
+			},
+			error : function(e) {
+				
+				alert("Internal error occured----- "+JSON.stringify(e))
+				console.log("ERROR: ", e);
+			}
+		});	
+    }
+    
+    
+    
+}
+
+
+function runScript1(e,postpk,obj,id) {
+    if (e.keyCode == 13) {
+    
+	 $.ajax({
+			type : "POST",
+			//contentType : "application/json",
+			url : "/submitcomment",
+			data :{postcomment:$("#"+id).val(),postpk:postpk,userid:$("#userid1").val()},
+			success : function(response) {
+				var data= response;
+				
+				$(obj).parent().parent().parent().find('#commenthere1')
+				
+				
+				.append('<nav class="navbar navbar-default" style="margin-left:8px;width:660px;" id="nav'+ response.split(',')[0] +'">'
+						 +'<label style="margin-left:5px;" class="navbar-text">'+response.split(',')[2]+':</label>'
+						+'	<p class="navbar-text" style="margin-left:-5px;">'+$("#"+id).val()+'</p>'
+				 +'<button id="'+ response.split(',')[0] +'" type="button" class="btn btn-default" style="margin-left:440px;margin-top:10px" onclick="delComment(this,this.id);">'
+					+'<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button></nav>');
+				
+				
+				/* 
+				 .append('<nav class="navbar navbar-default" style="margin-left:8px;width:660px;" id="nav'+ data +'">'
+				 +'<label id="comment'+ data +'" style="margin-left:10px; width:400px;font-size:15px;font-weight:lighter;">'+$("#"+id).val()+'</label>'
+				 +'<button id="'+ data +'" type="button" class="btn btn-default" style="margin-left:200px;margin-top:10px" onclick="delComment(this,this.id);">'
+					+'<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button></nav>');
+				 */
+				$("#"+id).hide();
+				
+				
+			},
+			error : function(e) {
+				
+				alert("Internal error occured----- "+JSON.stringify(e))
+				console.log("ERROR: ", e);
+			}
+		});	
+    }
+}
+
+var postid;
+
+function shareOnPost(postpk,postcontent,obj){
+	$("#sharepostdata").text('');
+	$("#aboutshare").val('');
+	$("#toshare").val('');
+	$("#sharepostdata").text(postcontent);
+	postid=postpk;
+	
+}
+
+function firstShare(obj){
+	$("#sharepostdata").text('');
+	$("#aboutshare").val('');
+	$("#toshare").val('');
+	postid=firstpostid;
+	$("#sharepostdata").text(fistpostcontent);
+}
+
+function sharePostnow(){
+	if($("#toshare").val()==""){
+		alertify .alert("Please select at least one user to share with.");
+	}
+	else{
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/sharepost",
+		data :{postid:postid,aboutpost:$("#aboutshare").val(),sharedby:$("#userid1").val(),shareto:$("#toshare").val()},
+		success : function(response) {
+			var data= response;
+			//alert(data.usernotFound.length);
+			$("#GSCCModal").modal('hide');
+			if(data.usernotFound.length!=0){
+				for(var i in notfound)
+				{
+				alert(notfound[i]+" user(s) are not present");
+				}
+				
+			}; 
+			if(data.sharecount!=0){
+				$("#postshares"+postid).html(data.sharecount+' share(s)');
+				$("#sharedetails1").html(data.sharecount+' share(s)'); 
+				
+			};
+			
+			
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});	
+	}
+}
+
+/* function getComments1(postpk,obj){
+	
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/fetchcomments",
+		data :{postpk:postpk},
+		success : function(response) {
+			var data=response;
+			 $.each(data, function(k, v) {
+				   
+				    
+				    $(obj).parent().parent().parent().find('#commenthere')
+					 .append('<nav class="navbar navbar-default" style="margin-left:8px;width:660px;" id="nav'+ v.pkcomment +'">'
+					+'<label id="comment'+ v.pkcomment +'" style="margin-left:10px; width:400px;font-size:15px;font-weight:lighter;">'+v.commentcontent+'</label>'
+					+'<button id="'+ v.pkcomment +'" type="button" class="btn btn-default" style="margin-left:200px;margin-top:10px" onclick="delComment(this,this.id);">'
+					+'<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button></nav>');
+					
+				  }); 
+			  $("#postdetails1").hide();
+			
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});
+	
+} */
+
+function getComments(postid,obj){
+	
+	//$(obj).parent().children('div').show();
+	$("#"+postid).show();
+	$(obj).hide();
+}
+
+function viewShares(obj){
+	$(obj).parent().children('nav').show();
+	$(obj).hide();
+}
+
+function getPplLiked(postid,obj){
+	var a="hello";
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/fetchpplliked",
+		data :{postid:postid},
+		success : function(response) {
+			$("#likeuserdetails").html('');
+			//var c="bye";
+			for(var i in response)
+					{
+						
+						$("#likeuserdetails").append('<nav class="navbar navbar-default" style="padding-left:15px;padding-top:7px;">'+response[i]+'</nav>');
+					}
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+		
+	});	
+	/* if(a=="hello"){
+			var b ="hi";
+	}
+	alert(b); */
+	//alert(c);
+}
+function delComment(obj,id){
+	
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/deletecomment",
+		data :{pkcomment:id},
+		success : function(response) {
+			$("#nav"+id).hide();
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});	
+}
+
+function getPosts(){
+	
+	$("#all_posts").show();
+	$("#allpostlink").hide();
+	$("#allpostlink1").hide();
+}
+
+function delPost(postid,obj){
+	$.ajax({
+		type : "POST",
+		//contentType : "application/json",
+		url : "/deletepost",
+		data :{postid:postid},
+		success : function(response) {
+			
+			$(obj).parent().hide();
+		},
+		error : function(e) {
+			
+			alert("Internal error occured----- "+JSON.stringify(e))
+			console.log("ERROR: ", e);
+		}
+	});	
+	
+}
+</script>
+</html>
+

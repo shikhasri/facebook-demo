@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="webjars/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" media="screen"> </link>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="webjars/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<title>Registration Page</title>
+</head>
+<body>
+
+<div class="container-fluid">
+<div class="container">
+
+<div th:fragment="header">
+<h3>Register here</h3>
+        <nav class="navbar navbar-default" id="navparent" style="padding-bottom:10px ;width:500px;margin-top:100px;margin-left:290px">
+            <div class="container-fluid" style="padding-top:12px;">
+<form action="/save" th:object="${user}" method="POST">
+
+    <div class="form-group">
+        <label >Name</label>
+        <input type="text" class="form-control" th:field="*{name}"></input>
+        <div align="center" th:if="${nameError}">
+			<p style="font-size: 20; color: #FF1C19;" th:text="${nameError}"></p>
+		</div>
+       <!--   <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name can't be empty</p> -->
+    </div>
+   
+    <div class="form-group">
+        <label >E-mail</label>
+        <input type="email" class="form-control" th:field="*{email}"></input>
+        <div align="center" th:if="${emailError}">
+			<p style="font-size: 20; color: #FF1C19;" th:text="${emailError}"></p>
+		</div>
+		 <div align="center" th:if="${emailDuplicate}">
+			<p style="font-size: 20; color: #FF1C19;" th:text="${emailDuplicate}"></p>
+		</div>
+      <!--  <p th:if="${#fields.hasErrors('email')}" th:errors="*{name}">Email can't be empty</p>  -->
+    </div>
+    <div class="form-group">
+        <label >Password</label>
+        <input type="password" class="form-control" th:field="*{password}"></input>
+        <div align="center" th:if="${passwordError}">
+			<p style="font-size: 20; color: #FF1C19;" th:text="${passwordError}"></p>
+		</div>
+        <!-- <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password can't be empty</p> -->
+    </div>
+    
+    <button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
+</form>
+</div>
+		</nav>
+		</div>
+		</div>
+</div>
+
+ 
+<a th:href="@{/login.html}" style="margin-left:570px;font-size:20px;">Click to login</a>
+</body>
+</html>

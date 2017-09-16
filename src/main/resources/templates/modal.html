@@ -1,0 +1,38 @@
+
+<html>
+<head>
+<link href="webjars/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" media="screen"> </link>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="webjars/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+
+<div id="likesmodal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;  </button>
+        <h4 class="modal-title" >people who liked this post</h4>
+      </div>
+      <div class="modal-body">
+      <div th:if="${not #lists.isEmpty(userdata)}">
+      	 <div th:each="userlike:${userdata}">
+      	 <label th:text="userlike.name"></label>
+  		</div>
+      </div>
+       
+  		
+      </div>
+      <div class="modal-footer">
+        
+      </div>
+    </div>
+  </div>
+	
+    
+    
+</div>
+
+</body>
+</html>
